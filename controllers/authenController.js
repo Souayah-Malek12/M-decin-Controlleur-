@@ -15,7 +15,7 @@ const registreController = async(req, res) => {
                     message: "Provide missed field(s)"
                 })
         }
-        if(!regex.tetst(email)){
+        if(!regex.test(email)){
             return res.status(400).send({
                 success: false,
                 message : "Enter a valid email format"

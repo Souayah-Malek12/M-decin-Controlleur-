@@ -1,6 +1,5 @@
 const userModel = require("../models/userModel");
 const courrierModel = require("../models/courrierModel");
-
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
@@ -149,7 +148,8 @@ const updateProfileController = async(req, res)=> {
         await userExist.save();
         res.status(200).send({
             success : true,
-            message: 'profile updated succesfully'
+            message: 'profile updated succesfully',
+            userExist
         })
 
     }catch(error){
@@ -200,6 +200,12 @@ const consultProfileController = async(req, res)=> {
 const treatCourrierController = async(req, res) => {
     try{
         const {name, answer} = req.body ;
+        if(!name || !answer){
+            return res.status(401).send({
+                success: false,
+                message: 'Enter all fileds please'
+            });
+        }
 
         const courrier = await courrierModel.findOne({ sender : name});
 
@@ -236,10 +242,16 @@ const treatCourrierController = async(req, res) => {
 
 const searchByNameController = async(req, res) => {
     try{
+
+        const token = req.headers.authorization.split(' ')[1];
+        const decode = jwt.verify(token ,process.env.JWT_SECRET);
+        const user = await userModel.findById(decode.id);
+        const userEmail = user.email;
+
         const {name} = req.body;
         const regex = RegExp(`${name}`, 'i');
 
-        const courriers = await courrierModel.find({sender : {$regex : regex}});
+        const courriers = await courrierModel.find({sender : {$regex : regex}, receiver : userEmail});
         if(courriers.length === 0){
             return res.status(404).send({
                 success: false,
@@ -260,6 +272,15 @@ const searchByNameController = async(req, res) => {
 }
 const searchByDateController = async(req, res) => {
     try{
+
+
+        const token = req.headers.authorization?.split(' ')[1]; 
+
+        const decode = jwt.verify(token, process.env.JWT_SECRET);
+        const user  = await userModel.findById(decode.id);
+        const userEmail = user.email;
+
+
         const {date} = req.body;
         if(!date){
             return res.status(401).send({
@@ -284,7 +305,7 @@ const searchByDateController = async(req, res) => {
         const courriers = await courrierModel.find({ receivedDate :{
             $gte : startOfDay,
             $lte : endOfDay
-        }});
+        } ,  receiver : userEmail});
 
         if(courriers.length === 0){
             return res.status(404).send({
@@ -308,7 +329,14 @@ const searchByDateController = async(req, res) => {
 
 const consultCourrierController = async(req, res) => {
     try{
-        const Courriers = await courrierModel.find({status:'Non-Traité'}).sort({receivedDate: 1});
+
+        const token = req.headers.authorization?.split(' ')[1]; 
+
+        const decode = jwt.verify(token, process.env.JWT_SECRET);
+        const user  = await userModel.findById(decode.id);
+        const userEmail = user.email;
+
+        const Courriers = await courrierModel.find({status:'Non-Traité', receiver : userEmail}).sort({receivedDate: 1});
         
         if (!Courriers){
             return res.status(400).send({
