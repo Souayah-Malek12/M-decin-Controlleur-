@@ -248,11 +248,11 @@ const searchByNameController = async(req, res) => {
         const user = await userModel.findById(decode.id);
         const userEmail = user.email;
 
-        const {name} = req.body;
+        const {name} = req.params;
         const regex = RegExp(`${name}`, 'i');
 
-        const courriers = await courrierModel.find({sender : {$regex : regex}, receiver : userEmail});
-        if(courriers.length === 0){
+        const Courriers = await courrierModel.find({sender : {$regex : regex}, receiver : userEmail});
+        if(Courriers.length === 0){
             return res.status(404).send({
                 success: false,
                 message : 'No courriers found'
@@ -260,7 +260,7 @@ const searchByNameController = async(req, res) => {
         }
         res.status(200).send({
             success: true,
-            courriers
+            Courriers
         })
     }catch(error){
         res.status(500).send({
@@ -288,7 +288,7 @@ const searchByDateController = async(req, res) => {
                 message : "Enter  date "
             })
         }
-
+        console.log(date)
         const dateObj = new Date(date);
 
         if( isNaN(dateObj.getTime())){
@@ -302,12 +302,12 @@ const searchByDateController = async(req, res) => {
         const endOfDay = new Date(dateObj.setUTCHours(23,59 , 59 , 999));
 
 
-        const courriers = await courrierModel.find({ receivedDate :{
+        const Courriers = await courrierModel.find({ receivedDate :{
             $gte : startOfDay,
             $lte : endOfDay
         } ,  receiver : userEmail});
 
-        if(courriers.length === 0){
+        if(Courriers.length === 0){
             return res.status(404).send({
                 success: false,
                 message : 'No courriers found'
@@ -315,7 +315,7 @@ const searchByDateController = async(req, res) => {
         }
         res.status(200).send({
             success: true,
-            courriers
+            Courriers
         })
     }catch(error){
         res.status(500).send({

@@ -7,8 +7,8 @@ router.put('/', authMiddleware ,updatePasswordController);
 router.put('/update', authMiddleware ,updateProfileController);
 router.get('/profil', authMiddleware, consultProfileController);
 router.get('/', authMiddleware, consultCourrierController);
-router.post('/', addCourrier)
-router.get('/nsearch', authMiddleware,searchByNameController);
+router.post('/add', addCourrier)
+router.get('/SBN/:name', authMiddleware,searchByNameController);
 router.get('/tsearch', authMiddleware, searchByDateController);
 router.post('/treat', authMiddleware, treatCourrierController);
 

@@ -25,8 +25,8 @@ app.use('/user', require("./routes/userRoutes"));
 
 
 // Testing server 
-app.use("/", (req, res)=> {
-    return res.status(200).send(" <h1>Home Page</h1>")
-})
+// app.use("/", (req, res)=> {
+//     return res.status(200).send(" <h1>Home Page</h1>")
+// })
 
 
