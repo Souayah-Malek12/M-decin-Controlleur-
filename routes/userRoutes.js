@@ -9,7 +9,7 @@ router.get('/profil', authMiddleware, consultProfileController);
 router.get('/', authMiddleware, consultCourrierController);
 router.post('/add', addCourrier)
 router.get('/SBN/:name', authMiddleware,searchByNameController);
-router.get('/tsearch', authMiddleware, searchByDateController);
+router.get('/tsearch/:date', authMiddleware, searchByDateController);
 router.post('/treat', authMiddleware, treatCourrierController);
 
 module.exports = router ;

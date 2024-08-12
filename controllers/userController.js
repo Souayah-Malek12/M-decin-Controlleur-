@@ -199,15 +199,15 @@ const consultProfileController = async(req, res)=> {
 
 const treatCourrierController = async(req, res) => {
     try{
-        const {name, answer} = req.body ;
-        if(!name || !answer){
+        const {courrierID, answer} = req.body ;
+        if(!courrierID || !answer){
             return res.status(401).send({
                 success: false,
                 message: 'Enter all fileds please'
             });
         }
 
-        const courrier = await courrierModel.findOne({ sender : name});
+        const courrier = await courrierModel.findById( courrierID);
 
         if(!courrier){
             return res.status(404).send({
@@ -215,6 +215,8 @@ const treatCourrierController = async(req, res) => {
                 message : 'No courrier Found'
             })
         }   
+
+        
         const NowDate = new Date();
 
         courrier.traceability.push({
@@ -281,7 +283,8 @@ const searchByDateController = async(req, res) => {
         const userEmail = user.email;
 
 
-        const {date} = req.body;
+        const {date} = req.params;
+        console.log(date)
         if(!date){
             return res.status(401).send({
                 success : false,
