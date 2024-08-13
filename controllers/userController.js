@@ -253,7 +253,7 @@ const searchByNameController = async(req, res) => {
         const {name} = req.params;
         const regex = RegExp(`${name}`, 'i');
 
-        const Courriers = await courrierModel.find({sender : {$regex : regex}, receiver : userEmail});
+        const Courriers = await courrierModel.find({sender : {$regex : regex}, receiver : userEmail, status:"Non-Traité"});
         if(Courriers.length === 0){
             return res.status(404).send({
                 success: false,
@@ -362,5 +362,30 @@ const consultCourrierController = async(req, res) => {
     }
 }
 
+const fecthCourrierDetails = async(req, res)=> {
+    try{
+        const courrierID = req.params.id;
+        const courrier = await courrierModel.findById(courrierID);
 
-module.exports = { addCourrier, searchByDateController,treatCourrierController, searchByNameController,updatePasswordController , updateProfileController, consultProfileController,consultCourrierController };
+        if (!courrier) {
+            return res.status(404).send({
+                success: false,
+                message: 'Courrier not found',
+            });
+        }
+        return res.status(200).send({
+            success: true,
+            courrier
+        });
+
+    }catch(error){
+        res.status(500).send({
+            success: false,
+            message: 'Error  Courrrier  details api', 
+            error :error.message
+        });
+    }
+}
+
+
+module.exports = { fecthCourrierDetails ,addCourrier, searchByDateController,treatCourrierController, searchByNameController,updatePasswordController , updateProfileController, consultProfileController,consultCourrierController };
