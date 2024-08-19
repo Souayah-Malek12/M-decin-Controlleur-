@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {updatePasswordController, updateProfileController, consultProfileController, consultCourrierController, addCourrier, searchByNameController, searchByDateController, treatCourrierController, fecthCourrierDetails} = require("../controllers/userController");
+const {updatePasswordController, updateProfileController, consultProfileController, consultCourrierController, addCourrier, searchByNameController, searchByDateController, treatCourrierController, fecthCourrierDetails, fetchAllCourrier} = require("../controllers/userController");
 const authMiddleware = require("../middelwares/authMiddleware");
 
 router.put('/', authMiddleware ,updatePasswordController);
@@ -12,5 +12,6 @@ router.get('/SBN/:name', authMiddleware,searchByNameController);
 router.get('/tsearch/:date', authMiddleware, searchByDateController);
 router.post('/treat', authMiddleware, treatCourrierController);
 router.get('/details/:id', authMiddleware, fecthCourrierDetails);
+router.get('/all', authMiddleware, fetchAllCourrier)
 
 module.exports = router ;

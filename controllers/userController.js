@@ -336,6 +336,7 @@ const consultCourrierController = async(req, res) => {
         const token = req.headers.authorization?.split(' ')[1]; 
 
         const decode = jwt.verify(token, process.env.JWT_SECRET);
+
         const user  = await userModel.findById(decode.id);
         const userEmail = user.email;
 
@@ -387,5 +388,33 @@ const fecthCourrierDetails = async(req, res)=> {
     }
 }
 
+const fetchAllCourrier = async(req, res) => {
+    try{
 
-module.exports = { fecthCourrierDetails ,addCourrier, searchByDateController,treatCourrierController, searchByNameController,updatePasswordController , updateProfileController, consultProfileController,consultCourrierController };
+        const token = req.headers.authorization?.split(' ')[1]; 
+
+        const courriers = await courrierModel.find({}).sort({ receivedDate: -1});
+
+        if (!courriers) {
+            return res.status(404).send({
+                success: false,
+                message: 'Courrier not found',
+            });
+        }
+
+        return res.status(200).send({
+            success: true,
+            message : 'Courrier',
+            courriers
+        })
+    }catch(error){
+        res.status(500).send({
+            success: false,
+            message: 'Error  fecth Courrrier  api', 
+            error :error.message
+        });
+    }
+}
+
+
+module.exports = { fetchAllCourrier , fecthCourrierDetails ,addCourrier, searchByDateController,treatCourrierController, searchByNameController,updatePasswordController , updateProfileController, consultProfileController,consultCourrierController };
