@@ -291,7 +291,6 @@ const searchByDateController = async(req, res) => {
                 message : "Enter  date "
             })
         }
-        console.log(date)
         const dateObj = new Date(date);
 
         if( isNaN(dateObj.getTime())){
@@ -416,5 +415,23 @@ const fetchAllCourrier = async(req, res) => {
     }
 }
 
+const fecthCourrierTrac = async (req, res )=> {
+    try{
+        const TracCourriers = await courrierModel.find({
+            'traceability.0' : { $exists : true}
+        })
+        return res.status(200).send({
+            success: true,
+            TracCourriers
+        })
+    }catch(error){
+        return res.status(500).send({
+            success : false,
+            message: "Error in Fetch Courrier Traceability api ",
+            error: error.message
+        })
+    }
+}
 
-module.exports = { fetchAllCourrier , fecthCourrierDetails ,addCourrier, searchByDateController,treatCourrierController, searchByNameController,updatePasswordController , updateProfileController, consultProfileController,consultCourrierController };
+
+module.exports = { fecthCourrierTrac ,fetchAllCourrier , fecthCourrierDetails ,addCourrier, searchByDateController,treatCourrierController, searchByNameController,updatePasswordController , updateProfileController, consultProfileController,consultCourrierController };

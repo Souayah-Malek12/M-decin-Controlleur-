@@ -8,8 +8,15 @@ const registreController = async(req, res) => {
         const passwordStrengthRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        const {firstName, lastName, address, phoneNumber, role, establishment, email, password } = req.body;
-        if( !firstName ||  !lastName ||  !address||  !phoneNumber || !role  || !email || !password ){
+        const {firstName, lastName, address, phoneNumber, role, establishment, email, password, confirmPassword } = req.body;
+        if(!confirmPassword){
+            return   res.status(400).send({
+                success : false,
+                message: "Confirm pwd(s)"
+            })
+        }
+        if( !firstName ||  !lastName ||  !address||  !phoneNumber || !role  || !email || !password || !confirmPassword ){
+            
                 return res.status(400).send({
                     success : false,
                     message: "Provide missed field(s)"
@@ -23,7 +30,7 @@ const registreController = async(req, res) => {
         }
         const emailExist = await user.findOne({email});
         if(emailExist){
-            return res.status(500).send({
+            return res.status(409).send({
                 success : false,
                 message: "email exist"
             })
@@ -32,6 +39,13 @@ const registreController = async(req, res) => {
             return res.status(400).send({
                 success: false,
                 message : "New password does not meet the strength requirements. It must be at least 8 characters long and include uppercase, lowercase letters, numbers, and special characters"
+            })
+        }
+
+        if(password !== confirmPassword) {
+            return res.status(401).send({
+                success: false,
+                message : "Passwords do not match   "
             })
         }
 
